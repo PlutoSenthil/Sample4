@@ -18,28 +18,31 @@ jobs:
     - name: Login via Azure CLI
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
+        enable-AzPSSession: true
         
         
     - name: Login to Azure Container Registry
       uses: azure/docker-login@v1
       with:
-        login-server: fastapi-sample.azurecr.io
+        login-server: fastapisample.azurecr.io
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
      
      
     - name: Build and push container image to registry 
       run: |
-        docker build . -t fastapi-sample.azurecr.io/fastapi-cd:${{ github.sha }}
-        docker push fastapi-sample.azurecr.io/fastapi-cd:${{ github.sha }}
+        docker build . -t fastapisample.azurecr.io/fastapi-cd:${{ github.sha }}
+        docker push fastapisample.azurecr.io/fastapi-cd:${{ github.sha }}
         
         
     - name: Deploy to App Service
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'fastapi-cd'
-        images: 'fastapi-sample.azurecr.io/fastapi-cd:${{ github.sha }}'
+        images: 'fastapisample.azurecr.io/fastapi-cd:${{ github.sha }}'
         slot-name: 'staging'
         
         
